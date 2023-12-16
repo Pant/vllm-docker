@@ -1,9 +1,10 @@
-FROM nvcr.io/nvidia/pytorch:23.11-py3 as build
-RUN apt-get update && \
-    apt-get install -y python3-pip python-is-python3 wget curl rsync git && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN pip install -e https://github.com/vllm-project/vllm.git && rm -rf /root/.cache/pip
+FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel as build
+RUN  --mount=type=cache,target=/var/cache/apt \ 
+    apt-get update && \
+    apt-get install -y python-is-python3 wget curl rsync git 
+    
+RUN --mount=type=cache,target=/root/.cache/pip \ 
+  pip install git+https://github.com/vllm-project/vllm.git@main
 WORKDIR /root
 
 ENTRYPOINT ["/bin/bash"]
